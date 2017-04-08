@@ -142,7 +142,7 @@ namespace ChatModule
         /// <param name="account">Account to be used as master in this chat source.</param>
         /// <returns>True if it belongs to this chat source.</returns>
         /// <remarks>This will modify the property value of MasterAcount.</remarks>
-        public bool setup(UserAccount account)
+        public virtual bool setup(UserAccount account)
         {
             if (!SourceName.Equals(account.SourceName) || !account.canLog())
                 return false;

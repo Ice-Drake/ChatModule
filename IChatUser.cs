@@ -29,7 +29,7 @@ namespace ChatModule
         /// <summary>
         /// Retrieve the user account associated with the designated chat source.
         /// </summary>
-        /// <param name="source">Chat source to search by</param>
+        /// <param name="source">Chat source to search by</param>'
         /// <returns>A list of user accounts associated</returns>
         /// <remarks>This will return null if there is no user account of the matching chat source.</remarks>
         IList<UserAccount> retrieve(IChatSource source);

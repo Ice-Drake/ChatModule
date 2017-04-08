@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using PluginSDK;
 
 namespace ChatModule
 {
     public class FollowerChatUser : IChatUser
     {
-        private SortedList<string, UserAccount> accounts;
+        private SortedList<string, List<UserAccount>> accounts;
 
         public Color FontColor { get; set; }
 
@@ -16,22 +13,25 @@ namespace ChatModule
 
         public FollowerChatUser(string username)
         {
-            accounts = new SortedList<string, UserAccount>();
+            accounts = new SortedList<string, List<UserAccount>>();
             FontColor = Color.Black;
             Profile = new Profile(username);
         }
 
         public void add(UserAccount account)
         {
-            accounts.Add(account.SourceName, account);
+            if (accounts.ContainsKey(account.SourceName))
+                accounts[account.SourceName].Add(account);
+            else
+                accounts.Add(account.SourceName, new List<UserAccount>() { account });
         }
 
         public IList<UserAccount> retrieve(IChatSource source)
         {
-            //Currently, handling one account per chat source.
-            List<UserAccount> list = new List<UserAccount>();
-            list.Add(accounts[source.SourceName]);
-            return list;
+            if (accounts.ContainsKey(source.SourceName))
+                return accounts[source.SourceName];
+            else
+                return null;
         }
     }
 }

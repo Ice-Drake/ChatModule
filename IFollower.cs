@@ -1,14 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-
 namespace ChatModule
 {
     /// <summary>
     ///  All chatbot plugins will implement this interface indirectly through IFollowerPlugin.
     ///  Do not implement this interface directly unless IChatSource is being implemented as well.
     /// </summary>
-    public interface IFollower : IChatUser
+    public interface IFollower : IChatBot
     {
         /// <summary>
         /// Property for the nickname for this follower.
@@ -27,18 +23,6 @@ namespace ChatModule
         string Role { get; }
 
         /// <summary>
-        /// Property for the queue of outgoing messages from this chat user.
-        /// </summary>
-        Queue<ChatMessage> OutgoingMessage { get; }
-
-        /// <summary>
-        /// Start up the follower.
-        /// </summary>
-        /// <remarks>This method is called near the end of MultiDesktop startup process after
-        /// everything has been initialized.</remarks>
-        void start();
-
-        /// <summary>
         /// Listen to a message send for other chat users.
         /// </summary>
         /// <param name="message">A message to be listened to.</param>
@@ -47,17 +31,10 @@ namespace ChatModule
         void listen(ChatMessage message);
 
         /// <summary>
-        /// Receive a message send for this chat user.
+        /// Start up the follower.
         /// </summary>
-        /// <param name="message">A message to be received.</param>
-        /// <remarks>This will be called when the conversation is directed to this chat user.</remarks>
-        void receive(ChatMessage message);
-
-        /// <summary>
-        /// Join a chat source.
-        /// </summary>
-        /// <param name="source">The chat source of whom is joining in.</param>
-        /// <remarks>This chat user must join the designated chat source before a conversation can be initiated in that source.</remarks>
-        void join(IChatSource source);
+        /// <remarks>This method is called near the end of MultiDesktop startup process after
+        /// everything has been initialized.</remarks>
+        void start();
     }
 }

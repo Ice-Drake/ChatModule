@@ -238,6 +238,18 @@ namespace ChatModule
 
             chatComboBox.Items.Add(followerChatControl.SourceName.ToUpper());
             chatComboBox.SelectedIndex = 0;
+
+            //Create SystemBot and add it to the Follower Chat
+            SystemBot bot = new SystemBot(chatController);
+            UserAccount botAccount = followerChatControl.createUser(bot.Profile.Name);
+            botAccount.Owner = bot;
+            bot.add(botAccount);
+            followerChatControl.addUser(botAccount);
+            chatController.addUser(bot);
+
+            //Create SystemChatFilter
+            SystemLogFilter.Bot = bot;
+            SystemChatFilter filter = new SystemChatFilter(mainAccount);
         }
 
         public void activate()

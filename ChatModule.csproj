@@ -52,12 +52,16 @@
   <ItemGroup />
   <ItemGroup>
     <Compile Include="AccountManager.cs" />
+    <Compile Include="ChatCommand.cs" />
+    <Compile Include="ChatHandler.cs" />
     <Compile Include="ChatManager.cs" />
     <Compile Include="ChatMessage.cs" />
+    <Compile Include="ChatModifyCommand.cs" />
     <Compile Include="ChatPanel.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ChatSourceMessage.cs" />
+    <Compile Include="CommandMessage.cs" />
     <Compile Include="FollowerChatControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -69,6 +73,7 @@
     <Compile Include="IChatSourceAccountManager.cs" />
     <Compile Include="IChatUser.cs" />
     <Compile Include="IChatWPFPlugin.cs" />
+    <Compile Include="IChatBot.cs" />
     <Compile Include="IFollower.cs" />
     <Compile Include="IFollowerPlugin.cs" />
     <Compile Include="IProfile.cs" />
@@ -79,6 +84,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SystemBot.cs" />
+    <Compile Include="SystemChatFilter.cs" />
+    <Compile Include="SystemLogFilter.cs" />
     <Compile Include="TextMessage.cs" />
     <Compile Include="UserAccount.cs" />
   </ItemGroup>

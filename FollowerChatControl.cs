@@ -254,9 +254,9 @@ namespace ChatModule
 
         public void addUser(UserAccount account)
         {
-            if (!accounts.ContainsKey(account.Username) && account.Owner != null && account.Owner is IFollower)
+            if (!accounts.ContainsKey(account.Username) && account.Owner != null && account.Owner is IChatBot)
             {
-                //Add follower status to the table
+                //Add chatbot status to the table
                 DataRow row = statusTable.NewRow();
                 switch (account.Status)
                 {
@@ -276,9 +276,9 @@ namespace ChatModule
                 row["Name"] = account.Username;
                 statusTable.Rows.Add(row);
 
-                account.StatusChanged += new PropertyChangedEventHandler(follower_StatusChanged);
+                account.StatusChanged += new PropertyChangedEventHandler(chatBot_StatusChanged);
 
-                ((IFollower)account.Owner).join(this);
+                ((IChatBot)account.Owner).join(this);
             }
 
             accounts.Add(account.Username, account);
@@ -318,18 +318,18 @@ namespace ChatModule
             //Split message into words
             string[] messagePieces = message.Split(new char [] {',', ' '});
 
-            //Check if the message is directed to a follower
+            //Check if the message is directed to a chatbot
             foreach (UserAccount account in Accounts)
             {
-                if (account.Owner != null && account.Owner is IFollower)
+                if (account.Owner != null && account.Owner is IChatBot)
                 {
-                    IFollower follower = (IFollower)account.Owner;
+                    IChatBot bot = (IChatBot)account.Owner;
 
                     ///Check if the message contains a follower name
                     if (messagePieces.Length > 1)
                     {
                         //Check if the name is in the beginning of the message
-                        if (messagePieces[0].ToUpper().IndexOf(follower.Profile.Name.ToUpper()) > -1)
+                        if (messagePieces[0].ToUpper().IndexOf(bot.Profile.Name.ToUpper()) > -1)
                         {
                             target = account;
                             message = message.Substring(messagePieces[0].Length);
@@ -343,7 +343,7 @@ namespace ChatModule
                             break;
                         }
                         //Check if the name is in the end of the message
-                        else if (messagePieces[messagePieces.Length - 1].ToUpper().IndexOf(follower.Profile.Name.ToUpper()) > -1)
+                        else if (messagePieces[messagePieces.Length - 1].ToUpper().IndexOf(bot.Profile.Name.ToUpper()) > -1)
                         {
                             target = account;
                             message = message.Substring(0, message.Length - messagePieces[messagePieces.Length - 1].Length);
@@ -368,8 +368,8 @@ namespace ChatModule
 
             if (target != null && target.Owner != null)
             {
-                //Target must be a follower
-                ((IFollower)target.Owner).receive(new ChatMessage(this, sender, target, new TextMessage(message)));
+                //Target must be a chat bot
+                ((IChatBot)target.Owner).receive(new ChatMessage(this, sender, target, new TextMessage(message)));
             }
 
             UserAccount lastListener = null;
@@ -409,14 +409,14 @@ namespace ChatModule
         {
             foreach (UserAccount account in Accounts)
             {
-                if (account.Owner != null && account.Owner is IFollower)
+                if (account.Owner != null && account.Owner is IChatBot)
                 {
-                    IFollower follower = (IFollower)account.Owner;
-                    lock (follower.OutgoingMessage)
+                    IChatBot bot = (IChatBot)account.Owner;
+                    lock (bot.OutgoingMessage)
                     {
-                        if (follower.OutgoingMessage.Count > 0)
+                        if (bot.OutgoingMessage.Count > 0)
                         {
-                            ChatMessage message = follower.OutgoingMessage.Dequeue();
+                            ChatMessage message = bot.OutgoingMessage.Dequeue();
 
                             if (!message.Hidden)
                             {
@@ -427,7 +427,7 @@ namespace ChatModule
                                         chatLog.Rows[row].DefaultCellStyle.ForeColor = message.Sender.Owner.FontColor;
                                     chatLog.Rows[row].Cells["chatNameColumn"].Value = message.Sender.Username;
 
-                                    if (message.Recipient.Owner is IFollower && message.Recipient.Status != ChatStatus.Available)
+                                    if (message.Recipient.Owner is IChatBot && message.Recipient.Status != ChatStatus.Available)
                                         chatLog.Rows[row].Cells["chatMessageColumn"].Value = message.Content.Message.Insert(message.Content.Message.Length - 1, ", " + message.Recipient.Owner.retrieve(this)[0].Username);
                                     else
                                         chatLog.Rows[row].Cells["chatMessageColumn"].Value = message.Content.Message;
@@ -440,9 +440,9 @@ namespace ChatModule
                             }
 
                             UserAccount recipient = message.Recipient;
-                            if (recipient.Owner != null && recipient.Owner is IFollower)
+                            if (recipient.Owner != null && recipient.Owner is IChatBot)
                             {
-                                ((IFollower)recipient.Owner).receive(message);
+                                ((IChatBot)recipient.Owner).receive(message);
                             }
 
                             if (IncomingMessage != null)
@@ -456,14 +456,12 @@ namespace ChatModule
             }
         }
 
-        private void follower_StatusChanged(object sender, PropertyChangedEventArgs e)
+        private void chatBot_StatusChanged(object sender, PropertyChangedEventArgs e)
         {
             UserAccount account = (UserAccount)sender;
 
-            if (account.Owner != null && account.Owner is IFollower)
+            if (account.Owner != null && account.Owner is IChatBot)
             {
-                IFollower follower = (IFollower)account.Owner;
-
                 DataRow row = statusTable.Rows[statusTableBS.Find("Name", account.Username)];
 
                 switch (account.Status)
